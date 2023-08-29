@@ -6,13 +6,14 @@ namespace TestProject1
 {
     public class Tests
     {
-             
+        #region Positive TestCase
+
         [Test, Category("A user can have as many accounts as they want")]          
         public void Test1()
         {
             string Account = "Account";
             ServiceRequestAPICalls serviceRequestApiCalls = new ServiceRequestAPICalls();
-            string PostURL = "https://localhost4565/todos";
+            string PostURL = "https://localhost:4565/account";
 
             //Test Data in json format
             string filePath = serviceRequestApiCalls.Jsonfile(Account);
@@ -38,7 +39,7 @@ namespace TestProject1
 //Creation
             string Account = "Account";
             ServiceRequestAPICalls serviceRequestApiCalls = new ServiceRequestAPICalls();
-            string PostURL = "https://localhost4565/todos";
+            string PostURL = "https://localhost:4565/account/create";
 
             //Test Data in json format
             string filePath = serviceRequestApiCalls.Jsonfile(Account);
@@ -57,12 +58,13 @@ namespace TestProject1
 
 //Deletion
             string DeleteAccount = "DeleteAccount";
+            string PostURLdelete = "https://localhost:4565/account/delete";
 
             //Test Data in json format
             string filePathDelete = serviceRequestApiCalls.Jsonfile(DeleteAccount);
 
             //Delete the request
-            string contentdelete = serviceRequestApiCalls.RestSharpRequestPOST(PostURL, filePath);
+            string contentdelete = serviceRequestApiCalls.RestSharpRequestPOST(PostURLdelete, filePath);
 
             // Read Data
             string Datadelete = serviceRequestApiCalls.ReadData(content);
@@ -81,14 +83,14 @@ namespace TestProject1
         public void Test3()
         {
   
-  //Deposit 100$
+  //Deposit 500$
 
             SelectStatement DB = new SelectStatement();
             DB.Deposit(500);
 
             string GET = "Get";
             ServiceRequestAPICalls serviceRequestApiCalls = new ServiceRequestAPICalls();
-            string GetURL = "https://localhost4565/todos/GET";
+            string GetURL = "https://localhost:4565/account/deposit";
 
             //Test Data in json format
             string filePath = serviceRequestApiCalls.Jsonfile(GET);
@@ -109,11 +111,12 @@ namespace TestProject1
 
 
             DB.Withdraw(200);
+            string GetURLwithdraw = "https://localhost:4565/account/withdraw";
 
             //Test Data in json format
             string filePathWithdraw = serviceRequestApiCalls.Jsonfile(GET);
             //GET the request
-            string contentWithdraw = serviceRequestApiCalls.RestSharpRequestGET(GetURL, filePathWithdraw);
+            string contentWithdraw = serviceRequestApiCalls.RestSharpRequestGET(GetURLwithdraw, filePathWithdraw);
 
             // Read Data
             string DataWithdraw = serviceRequestApiCalls.ReadData(contentWithdraw);
@@ -137,7 +140,7 @@ namespace TestProject1
 
             string TotalAmounts = "TotalAmount";
             ServiceRequestAPICalls serviceRequestApiCalls = new ServiceRequestAPICalls();
-            string GetURL = "https://localhost4565/todos/GET";
+            string GetURL = "https://localhost:4565/account/create";
 
             //Test Data in json format
             string filePathWithdraw = serviceRequestApiCalls.Jsonfile(TotalAmounts);
@@ -168,7 +171,7 @@ namespace TestProject1
 
             string TotalAmounts = "TotalAmount";
             ServiceRequestAPICalls serviceRequestApiCalls = new ServiceRequestAPICalls();
-            string GetURL = "https://localhost4565/todos/GET";
+            string GetURL = "https://localhost:4565/account/create";
 
             //Test Data in json format
             string filePathWithdraw = serviceRequestApiCalls.Jsonfile(TotalAmounts);
@@ -198,7 +201,7 @@ namespace TestProject1
 
             string GET = "Get";
             ServiceRequestAPICalls serviceRequestApiCalls = new ServiceRequestAPICalls();
-            string GetURL = "https://localhost4565/todos/GET";
+            string GetURL = "https://localhost:4565/account/create";
 
             //Test Data in json format
             string filePath = serviceRequestApiCalls.Jsonfile(GET);
@@ -216,6 +219,127 @@ namespace TestProject1
             Assert.True(true);
 
         }
+
+        #endregion
+
+
+
+
+        #region Negetive TestCase
+
+        [Test, Category("A user can'nt create more than one account")]
+        public void Test7()
+        {
+            string MultipleAccounts = "MultipleAccounts";
+            ServiceRequestAPICalls serviceRequestApiCalls = new ServiceRequestAPICalls();
+            string PostURL = "https://localhost:4565/account";
+
+            //Test Data in json format
+            string filePath = serviceRequestApiCalls.Jsonfile(MultipleAccounts);
+
+            //Post the request
+            string content = serviceRequestApiCalls.RestSharpRequestPOST(PostURL, filePath);
+
+            // Read Data
+            string Data = serviceRequestApiCalls.ReadData(content);
+
+            if (Data.Contains("User,User1,User3"))
+            {
+                Assert.True(true);
+            }
+            Assert.Fail("Unable to create multiple Accounts");
+        }
+
+
+        [Test, Category("A user can'nt delete accounts")]
+        public void Test8()
+        {
+
+            ServiceRequestAPICalls serviceRequestApiCalls = new ServiceRequestAPICalls();
+            //Deletion
+            string DeleteAccount = "DeleteAccount";
+            string PostURLdelete = "https://localhost:4565/account/delete";
+
+            //Test Data in json format
+            string filePathDelete = serviceRequestApiCalls.Jsonfile(DeleteAccount);
+
+            //Delete the request
+            string contentdelete = serviceRequestApiCalls.RestSharpRequestPOST(PostURLdelete, filePathDelete);
+
+            // Read Data
+            string Datadelete = serviceRequestApiCalls.ReadData(contentdelete);
+
+            if (Datadelete.Contains("User1"))
+            {
+                Assert.Fail("Account not Deleted");
+            }
+            Assert.True(true);
+
+
+        }
+
+
+        [Test, Category("A user not able to deposit  from accounts.")]
+        public void Test9()
+        {
+            //Total Balance 1000$
+            //Deposit 500$
+
+            SelectStatement DB = new SelectStatement();
+            DB.Deposit(500);
+
+            string GET = "Get";
+            ServiceRequestAPICalls serviceRequestApiCalls = new ServiceRequestAPICalls();
+            string GetURL = "https://localhost:4565/account/deposit";
+
+            //Test Data in json format
+            string filePath = serviceRequestApiCalls.Jsonfile(GET);
+            //GET the request
+            string content = serviceRequestApiCalls.RestSharpRequestGET(GetURL, filePath);
+
+            // Read Data
+            string Data = serviceRequestApiCalls.ReadData(content);
+
+            if (Data.Contains("1500$"))
+            {
+                Assert.True(true);
+            }
+            Assert.Fail("500$ not Credited");
+
+
+
+        }
+
+        [Test, Category("A user not able to withdraw from accounts.")]
+        public void Test10()
+        {
+
+            //Total Balance 1500$
+            //Withdraw 200$
+
+            SelectStatement DB = new SelectStatement();
+            DB.Withdraw(200);
+            string GetURLwithdraw = "https://localhost:4565/account/withdraw";
+            ServiceRequestAPICalls serviceRequestApiCalls = new ServiceRequestAPICalls();
+
+            //Test Data in json format
+            string filePathWithdraw = serviceRequestApiCalls.Jsonfile(GetURLwithdraw);
+            //GET the request
+            string contentWithdraw = serviceRequestApiCalls.RestSharpRequestGET(GetURLwithdraw, filePathWithdraw);
+
+            // Read Data
+            string DataWithdraw = serviceRequestApiCalls.ReadData(contentWithdraw);
+
+            if (DataWithdraw.Contains("1300"))
+            {
+                Assert.True(true);
+            }
+            Assert.Fail("300$ not Debited");
+
+        }
+
+        #endregion
+
     }
 
 }
