@@ -1,18 +1,25 @@
-﻿Feature: Creating And Deleting Account in Bank
+﻿Feature: Creation And Deletion Of Accounts In CentralizedBank
 
 Background:
-    Given Pick TestData, PostURL And retrive test data in json format 
+    Given I have testdatafile for creation/deletion of account and baseUrl 
 
 @Sanity
-Scenario: Create Account
+Scenario: Creation of bank Accounts from CentralizedBank
 	 
-	Given Post the request "filePath"
-	When Read data "content"
-	Then Validate data "Data"
+	When Post call is made to create an account
+	Then I get successful response code 200
+	And I validate the successful response message as "Account created"
+	And Account created with initial balance '1000'
+	
+	
 
-Scenario: Delete Account
+Scenario: Deletion of bank Accounts from CentralizedBank
 	 
-	Given Post the delete request "filePathdelete"
-	When Read deleted data  "contentdelete"
-	Then Validate deleted data "Datadelete"
+	When Delete call is made to delete an account
+	Then I get successful response code 200
+	And I validate the successful response message as "Account deleted"
+	And User got deleted from the Accounts 
+
+
+
 
