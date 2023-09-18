@@ -29,11 +29,13 @@ namespace SpecFlowProject1.StepDefinitions
         }
 
         [When(@"Post call is made to create an account")]
-        public void WhenPostCallIsMadeToCreateAnAccount(string filePath)
+        public void WhenPostCallIsMadeToCreateAnAccount()
         {
+            string filePath="";
             //Post the request
             testContext.content = testContext.ServiceRequestAPICalls.RestSharpRequestPOST(PostURL, filePath);
         }
+
 
         [Then(@"I get successful response code (.*)")]
         public void ThenIGetSuccessfulResponseCode(int p0)
@@ -59,8 +61,9 @@ namespace SpecFlowProject1.StepDefinitions
         }
 
         [When(@"Delete call is made to delete an account")]
-        public void WhenDeleteCallIsMadeToDeleteAnAccount(string Accountdeleted)
+        public void WhenDeleteCallIsMadeToDeleteAnAccount()
         {
+            string Accountdeleted = "";
             if (Accountdeleted.Contains("User1"))
             {
                 Assert.Fail("Account not Deleted");
